@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "akrossbase"
+version = "0.1.2"
+maintainers = [
+    {name = "Yongwoo Park", email = "nnnlife@gmail.com"},
+]
+license = {text = "BSD-3-Clause"}
+description = "akross base library and quote service" 
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: Jython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Communications",
+    "Topic :: Internet",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Networking",
+]
+dependencies = [
+    "aio-pika>=8.3.0",
+    "pytz==2022.7.1",
+    "aiohttp",
+    "pandas",
+    "motor",
+    "openpyxl"
+]
+requires-python = ">=3.7"
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[project.urls]
+Homepage = "https://github.com/krosstrading/akrossbase"
+Source = "https://github.com/krosstrading/akrossbase"
+
+[project.optional-dependencies]
+
+[tool.setuptools]
+zip-safe = true
+include-package-data = false
+packages = ["akross",
+            "akross.common",
+            "akross.connection",
+            "akross.connection.pika_qt",
+            "akross.connection.aio",
+            "akross.rpc",
+            "akross.quote_service"]
+
+[flake8]
+max-line-length = 120
+
+[tool.setuptools.package-data]
+"*" = ["LICENSE", "README.md"]
