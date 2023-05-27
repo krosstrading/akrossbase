@@ -42,7 +42,15 @@ class MsgBroker:
         self.api_queue_name = ''
         self.api_container = ApiContainer()
         self.worker_handler = WorkerHandler(market_name, self.conn, self.api_container)
-        self.api_handler = ApiHandler(market_name, self.conn, self.api_container)
+        self.api_handler = ApiHandler(
+            url,
+            user,
+            password,
+            vhost,
+            market_name,
+            self.conn,
+            self.api_container
+        )
 
     async def run(self):
         await self.conn.connect()

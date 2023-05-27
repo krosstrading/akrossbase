@@ -18,7 +18,10 @@ class Api:
         self.workers.append(worker)
 
     def remove_worker(self, worker: Worker) -> int:
-        self.workers.remove(worker)
+        try:
+            self.workers.remove(worker)
+        except Exception:
+            pass  # does not have worker for this api
         return len(self.workers)
 
     def get_workers(self, worker_type: WorkerType) -> None:

@@ -1,3 +1,5 @@
-# akross-quote
-akross quote is data feed for specific stock market
-For client, this will provide APIs and broker client can be connected to here for external data sources
+# akrossbase
+akross is prototype platform to handle multiple brokers and assets in one place
+rabbitmq is currenly used for message broker
+
+basically, this package provides base library as base but quote service which executable is also in this package

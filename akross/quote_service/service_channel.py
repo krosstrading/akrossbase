@@ -59,6 +59,10 @@ class ServiceChannel(BaseChannel):
     def has_exchange(self, exchange_name) -> bool:
         return exchange_name in self._exchanges
 
+    def remove_exchange_from_list(self, exchange_name) -> None:
+        if exchange_name in self._exchanges:
+            del self._exchanges[exchange_name]
+
     async def create_subscribe_exchange(
         self,
         exchange_name: str

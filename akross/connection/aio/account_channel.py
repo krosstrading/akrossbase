@@ -113,12 +113,11 @@ class AccountChannel(BaseChannel):
         LOGGER.info('get response id: %s, ret: %s)', msg_id, ret)
         return ret, data
 
-    async def wait_for_market(self, market_name: str) -> None:
+    async def wait_for_accounts(self, market_name: str, account_number: str = '') -> None:
         while True:
             LOGGER.warning('wait_for_market %s', market_name)
-            for account in self._accounts:
-                if account.market == market_name:
-                    return
+            if len(self.get_accounts(market_name, account_number)) > 0:
+                break
             await asyncio.sleep(1)
 
     def get_accounts(self, market_name: str, account_number: str = '') -> List[Account]:

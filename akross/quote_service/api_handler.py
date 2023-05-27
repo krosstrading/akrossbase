@@ -3,6 +3,8 @@ from typing import List
 import uuid
 import aio_pika
 import logging
+import aiohttp
+import urllib.parse
 
 from akross.common.api_container import ApiContainer, WorkerWatcher
 from akross.common.enums import Command, CommandType, WorkerType
@@ -18,12 +20,20 @@ LOGGER = logging.getLogger(__name__)
 class ApiHandler(RpcHandler, WorkerWatcher):
     def __init__(
         self,
+        url: str,
+        user: str,
+        password: str,
+        vhost: str,
         market_name: str,
         conn: ServiceChannel,
         api_container: ApiContainer
     ):
         WorkerWatcher.__init__(self)
         RpcHandler.__init__(self, market_name, conn, api_container)
+        self._url = url
+        self._user = user
+        self._password = password
+        self._vhost = vhost
         self.api_container.add_watcher(self)
         self._subscribe_wait_q: List[SubscribeObject] = []
         self._lock = asyncio.Lock()
@@ -33,13 +43,32 @@ class ApiHandler(RpcHandler, WorkerWatcher):
             return
         await self.assign_pendings()
 
+    async def get_source_count(self, exchange_name):
+        url = (f'http://{self._url}:15672/api/exchanges/'
+               f'{urllib.parse.quote(self._vhost, safe="")}/'
+               f'{exchange_name}/bindings/source')
+        LOGGER.debug('check %s', self._url)
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                    url, auth=aiohttp.BasicAuth(self._user, self._password)) as response:
+                if response.status == 200:
+                    return len(await response.json())
+                else:
+                    LOGGER.warning('status code error %s', response)
+        return -1
+
     async def assign_pendings(self):
         async with self._lock:
             assigned = []
             for obj in self._subscribe_wait_q:
-                if await self.assign_subscribe(obj):
-                    assigned.append(obj)
-
+                binding_count = await self.get_source_count(obj.exchange)
+                LOGGER.info('bounding count for %s: %d', obj.exchange, binding_count)
+                if binding_count == 0:
+                    self.connection.remove_exchange_from_list(obj.exchange)
+                    assigned.append(obj)  # remove from wait queue since no bindings
+                else:
+                    if await self.assign_subscribe(obj):
+                        assigned.append(obj)
             for obj in assigned:
                 self._subscribe_wait_q.remove(obj)
 

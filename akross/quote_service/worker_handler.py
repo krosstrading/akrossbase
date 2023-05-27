@@ -30,9 +30,9 @@ class WorkerHandler(RpcHandler):
     async def remove_workers(self, workers: List[Worker]):
         for worker in workers:
             LOGGER.warning('remove worker %s', worker.uuid)
-            del self._workers[worker.uuid]
             if worker.get_worker_type() != WorkerType.Backtest:
                 self.api_container.remove_worker(worker)
+            del self._workers[worker.uuid]
 
     def get_available_backtest_worker(self, test_id: str) -> Optional[Worker]:
         # 임시로 뒤에 연결된 backtest worker 할당
