@@ -78,9 +78,7 @@ class MsgBroker:
             if command == Command.CreateBacktest:
                 LOGGER.info('create backtest %s', msg.body)
                 # 여러 개 backtest 운영시에는 testId 추가 필요
-                check_required_parameters(kwargs,
-                                          'targets', 'startTime', 'endTime',
-                                          'backtest', 'timeFrame')
+                check_required_parameters(kwargs, 'backtest')
                 worker = self.worker_handler.get_available_backtest_worker(kwargs['backtest'])
                 if worker:
                     await self.conn.publish_msg(worker.uuid, msg)

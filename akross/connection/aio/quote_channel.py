@@ -127,7 +127,7 @@ class QuoteChannel(BaseChannel):
         msg_id = str(uuid.uuid4())
         LOGGER.info('api_call(%s) msg_id: %s, cmd: %s, args: %s',
                     market.path, msg_id, command, kwargs)
-        timeout = 10
+        timeout = 60
         if 'timeout' in kwargs:
             timeout = kwargs['timeout']
         ret, data = await self.block_request(

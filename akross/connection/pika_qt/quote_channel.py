@@ -32,6 +32,7 @@ class BlockRequestMessage:
 
     def _handle_timeout(self):
         self.response = None
+        LOGGER.warning('handle timeout')
         self.loop.quit()
 
     def set_result(self, result: bytes):
@@ -197,7 +198,7 @@ class QuoteChannel:
                                                 reply_to=self._response_queue),
             body=body
         )
-
+        LOGGER.info('block msg: %s', msg_id)
         self._msg_dict[msg_id].block()
         resp = self._msg_dict[msg_id].get_result()
         del self._msg_dict[msg_id]
