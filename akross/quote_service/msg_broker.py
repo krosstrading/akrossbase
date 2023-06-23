@@ -90,6 +90,7 @@ class MsgBroker:
                 check_required_parameters(kwargs, 'backtest')
                 # self.worker_handler.free_backtest_worker(kwargs['uuid'])
             elif WorkerType.Backtest.value in kwargs:
+                LOGGER.info('backtest command %s', msg.body)
                 check_required_parameters(kwargs, 'backtest')
                 worker = self.worker_handler.get_backtest_worker(kwargs['backtest'])
                 if worker:
