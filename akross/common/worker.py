@@ -77,4 +77,4 @@ class Worker:
                f'subscribe: {self.subscribe_count}, capacity: {self.capacity}'
 
     def __repr__(self):
-        return self.__str__
+        return self.__str__()

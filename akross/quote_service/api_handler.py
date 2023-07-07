@@ -94,10 +94,11 @@ class ApiHandler(RpcHandler, WorkerWatcher):
             worker_type = WorkerType.Online
             workers = self.api_container.get_workers(command, worker_type)
 
-        LOGGER.info('cmd: %s, worker count %d', command, len(workers))
+        queue_name = self.connection.get_queue_name(worker_type)
+        LOGGER.info('cmd: %s, worker count %d, queue: %s',
+                    command, len(workers), queue_name)
         if len(workers) > 0:
-            await self.connection.publish_msg(
-                self.connection.get_queue_name(worker_type), msg)
+            await self.connection.publish_msg(queue_name, msg)
         else:
             LOGGER.error('no both workers and reply_to %s', msg.body)
             if len(msg.reply_to) > 0:

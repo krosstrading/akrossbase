@@ -73,8 +73,8 @@ class WorkerHandler(RpcHandler):
 
     async def on_pong(self, **kwargs):
         check_required_parameters(kwargs, 'uuid')
-        LOGGER.info('%s %s',
-                    kwargs['uuid'],
-                    'OK' if kwargs['uuid'] in self._workers else 'no matched')
+        # LOGGER.info('%s %s',
+        #             kwargs['uuid'],
+        #             'OK' if kwargs['uuid'] in self._workers else 'no matched')
         if kwargs['uuid'] in self._workers:
             self._workers[kwargs['uuid']].pong()
