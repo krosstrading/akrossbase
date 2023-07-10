@@ -87,7 +87,7 @@ class AccountChannel:
 
     def on_exchange_ok(self, method_frame):
         self._channel.queue_declare(
-            queue='',
+            queue=self.market_name + '.' + self.account + '.internal',
             exclusive=True,
             auto_delete=True,
             callback=self.on_declare_account_interval_queue
@@ -95,7 +95,7 @@ class AccountChannel:
 
     def on_declare_account_interval_queue(self, method_frame):
         self._channel.queue_declare(
-            queue=self.market_name + '.' + self.account + '.internal',
+            queue='',
             exclusive=True,
             auto_delete=True,
             callback=self.on_private_queue_declareok
