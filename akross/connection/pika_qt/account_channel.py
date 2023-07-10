@@ -1,9 +1,8 @@
-import asyncio
-from typing import Dict
 import sys
 import logging
 import pika
 import traceback
+import json
 from pika.channel import Channel
 from pika.exchange_type import ExchangeType
 from PyQt5.QtCore import QEventLoop
@@ -28,6 +27,7 @@ class AccountChannel:
         self,
         market_name: str,
         account: str,
+        account_event_callback,
         url: str = env.get_rmq_url(),
         user: str = env.get_rmq_user(),
         password: str = env.get_rmq_password(),
@@ -35,11 +35,11 @@ class AccountChannel:
     ):
         self.market_name = market_name
         self.account = account
+        self.account_event_callback = account_event_callback
         self._url = url
         self._user = user
         self._password = password
         self._vhost = vhost
-        self._msg_dict: Dict[str, asyncio.Future] = {}
 
         self._connection: pika.SelectConnection = None
         self._channel: Channel = None
@@ -88,6 +88,14 @@ class AccountChannel:
     def on_exchange_ok(self, method_frame):
         self._channel.queue_declare(
             queue='',
+            exclusive=True,
+            auto_delete=True,
+            callback=self.on_declare_account_interval_queue
+        )
+
+    def on_declare_account_interval_queue(self, method_frame):
+        self._channel.queue_declare(
+            queue=self.market_name + '.' + self.account + '.internal',
             exclusive=True,
             auto_delete=True,
             callback=self.on_private_queue_declareok
@@ -148,10 +156,19 @@ class AccountChannel:
         )
 
         self._channel.basic_consume(
+            queue=self.market_name + '.' + self.account + '.internal',
+            on_message_callback=self._on_event_msg,
+            auto_ack=True
+        )
+
+        self._channel.basic_consume(
             queue=self._broadcast_queue,
             on_message_callback=self.on_broadcast_msg,
             auto_ack=True
         )
+
+    def _on_event_msg(self, ch: Channel, deliver, props, body: bytes):
+        self.account_event_callback(json.loads(body))
 
     def _on_bus_msg(self, ch: Channel, deliver, props, body: bytes):
         if self._bus_handler is not None:
