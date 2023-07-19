@@ -19,3 +19,31 @@ def get_rmq_user() -> str:
 
 def get_rmq_password() -> str:
     return _get_env('RMQ_PASSWORD', 'Akross@q')
+
+
+def get_mongo_url() -> str:
+    mongo_url = _get_env('MONGO_QUOTE_URL', '')
+    if len(mongo_url) == 0:
+        return get_rmq_url()
+    return mongo_url
+
+
+def get_mongo_user() -> str:
+    mongo_user = _get_env('MONGO_QUOTE_USER', '')
+    if len(mongo_user) == 0:
+        return get_rmq_user()
+    return mongo_user
+
+
+def get_mongo_password() -> str:
+    password = _get_env('MONGO_QUOTE_PASSWORD', '')
+    if len(password) == 0:
+        return get_rmq_password()
+    return password
+
+
+def get_mongo_stream_url() -> str:
+    mongo_url = _get_env('MONGO_STREAM_URL', '')
+    if len(mongo_url) == 0:
+        return get_mongo_url()
+    return mongo_url
