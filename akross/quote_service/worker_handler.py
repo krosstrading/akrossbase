@@ -45,7 +45,8 @@ class WorkerHandler(RpcHandler):
         return None
 
     def get_backtest_worker(self, test_id) -> Optional[Worker]:
-        for worker in self._workers.values():
+        # 임시로 뒤에 연결된 backtest worker 우선순위
+        for worker in reversed(self._workers.values()):
             if worker.get_test_id() == test_id:
                 return worker
         return None
