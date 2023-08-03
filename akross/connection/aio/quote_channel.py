@@ -83,6 +83,8 @@ class QuoteChannel(BaseChannel):
 
     def add_subscribe_count(self, count: int):
         self._subscribe_count += count
+        LOGGER.warning('subscribe status %d/%d',
+                       self._subscribe_count, self._capacity)
 
     @property
     def seq(self):
