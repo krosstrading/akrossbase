@@ -15,6 +15,7 @@ class Command(str, Enum):
 class PredefinedExchange:
     Akrossquote = 'akrossquote'
     Akrossaccount = 'akrossaccount'
+    Akrossplanner = 'akrossplanner'
 
 
 class CommandType(str, Enum):
